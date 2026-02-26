@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exponential-smoothing-opl"
+version = "0.1.0"
+description = "Exponential Smoothing for Off-Policy Learning (ICML 2023)"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tool.setuptools]
+packages = ["exponential_smoothing_opl"]

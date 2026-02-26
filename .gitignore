@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+
+# Torchvision datasets/cache downloaded when running experiments
+MNIST/
+FashionMNIST/
+EMNIST/
+CIFAR100/
+cifar-100-python/
+cifar-100-python.tar.gz
+
+# Temporary reproducibility outputs
+results_repro/
+
+# Local editor/system files
+.DS_Store

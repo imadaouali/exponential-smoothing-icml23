@@ -1,40 +1,90 @@
-# [Exponential Smoothing for Off-Policy Learning (Oral at ICML 2023)](https://proceedings.mlr.press/v202/aouali23a/aouali23a.pdf)
+# Exponential Smoothing for Off-Policy Learning (ICML 2023)
 
-Experiments for the paper [Exponential Smoothing for Off-Policy Learning](https://proceedings.mlr.press/v202/aouali23a/aouali23a.pdf) accepted for an __Oral presentation at ICML 2023__.
+Code for the paper:
+[Exponential Smoothing for Off-Policy Learning](https://proceedings.mlr.press/v202/aouali23a/aouali23a.pdf)
+(Oral, ICML 2023).
 
-[Imad AOUALI](https://www.iaouali.com/) (Criteo and ENSAE-CREST), Victor-Emmanuel Brunel (ENSAE-CREST), David Rohde (Criteo), Anna Korba (ENSAE-CREST)
+Authors: Imad Aouali, Victor-Emmanuel Brunel, David Rohde, Anna Korba.
 
-## Abstract
+## Setup
 
-Off-policy learning (OPL) aims at finding improved policies from logged bandit data, often by minimizing the inverse propensity scoring (IPS) estimator of the risk. In this work, we investigate a smooth regularization for IPS, for which we derive a two-sided PAC-Bayes generalization bound. The bound is tractable, scalable, interpretable and provides learning certificates. In particular, it is also valid for standard IPS without making the assumption that the importance weights are bounded. We demonstrate the relevance of our approach and its favorable performance through a set of learning tasks. Since our bound holds for standard IPS, we are able to provide insight into when regularizing IPS is useful. Namely, we identify cases where regularization might not be needed. This goes against the belief that, in practice, clipped IPS often enjoys favorable performance than standard IPS in OPL.
+From the repository root:
 
-![Comparison](figures/vision_datasets.png)
+```bash
+pip install -r requirements.txt
+```
 
 ## Repository Structure
 
-This repository is structured as follows
+- `exponential_smoothing_opl/`
+  - `policies.py` — policy classes (logging, Gaussian, mixed-logit, softmax)
+  - `models.py` — OPL objective/bound implementations (Ours, London, Sakhi)
+  - `utils.py` — utilities for dataset generation and risk evaluation
+- `experiments/`
+  - `run_vision.py` — run experiments on one dataset and write `results/results_<dataset>.csv`
+  - `make_vision_figure.py` — generate the main paper figure from CSVs
+  - `check_reproducibility.py` — rerun experiments and compare generated CSV files
+- `results/` — saved experiment outputs
+- `figures/` — generated figures
+- `run_all_experiments.sh` — run all datasets + figure generation
 
-- `Experiments.ipynb`
-Notebook to run the main experiment of our paper.
+The repository is package/script-first. Notebook workflows have been replaced by CLI entrypoints.
 
-- `Figures.ipynb`
-Notebook to produce the main figure of our paper.
+## Usage
 
-- `utils.py`
-Useful Python functions.
+Run one dataset:
 
-- `policies.py`
-The three types of policies that were used in our experiments, softmax, mixed-logit, and Gaussian.
+```bash
+python experiments/run_vision.py --dataset MNIST --deterministic
+python experiments/run_vision.py --dataset FashionMNIST --deterministic
+python experiments/run_vision.py --dataset EMNIST --deterministic
+python experiments/run_vision.py --dataset CIFAR --deterministic
+```
 
-- `models.py` 
-The baselines used in our experiments.
+Important flags:
 
-- The folder `results` contains the results of models on different datasets saved as csv files.
+```bash
+python experiments/run_vision.py \
+  --dataset MNIST \
+  --logging_epochs 10 \
+  --train_epochs 20 \
+  --eta_steps 10 \
+  --eval_samples 2048 \
+  --eval_batch_size 64 \
+  --batch_size 128 \
+  --output_dir results \
+  --deterministic
+```
 
-- The folder `figures` contains the main figure of the paper, which is displayed above.
+Generate figure from CSV results:
 
+```bash
+python experiments/make_vision_figure.py --results_dir results --output figures/vision_datasets.pdf
+```
 
-[imad-email]: mailto:imadaouali9@gmail.com 
+Run reproducibility validation (same seed, repeated runs):
+
+```bash
+python experiments/check_reproducibility.py \
+  --dataset MNIST \
+  --runs 2 \
+  --seed 0 \
+  --deterministic \
+  --cpu
+```
+
+Run everything:
+
+```bash
+./run_all_experiments.sh
+```
+
+## Notes
+
+- CIFAR uses ImageNet-pretrained ResNet50 feature extraction through `torchvision`.
+- Root-level `models.py`, `policies.py`, and `utils.py` are compatibility wrappers that forward imports to the package modules.
 
 ## Acknowledgement
-The code for the baselines was provided by Otmane Sakhi, Pierre Alquier, Nicolas Chopin, [PAC-Bayesian Offline Contextual Bandits With Guarantees](https://proceedings.mlr.press/v202/sakhi23a/sakhi23a.pdf). Many thanks to them.
+
+The baseline code was provided by Otmane Sakhi, Pierre Alquier, Nicolas Chopin:
+[PAC-Bayesian Offline Contextual Bandits With Guarantees](https://proceedings.mlr.press/v202/sakhi23a/sakhi23a.pdf)
