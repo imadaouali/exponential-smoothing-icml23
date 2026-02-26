@@ -82,7 +82,7 @@ Run everything:
 ## Notes
 
 - CIFAR uses ImageNet-pretrained ResNet50 feature extraction through `torchvision`.
-- Root-level `models.py`, `policies.py`, and `utils.py` are compatibility wrappers that forward imports to the package modules.
+- Import code from `exponential_smoothing_opl.*` modules.
 
 ## Acknowledgement
 
